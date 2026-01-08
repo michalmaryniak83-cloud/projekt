@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title><!-- TODO: WSTAW TYTUŁ STRONY, np. "Nasza historia - Imię & Imię" -->Nasza historia</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Nasza historia, wspomnienia i wyznanie miłości.">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg-gradient: radial-gradient(circle at top left, #ffe6f7 0%, #ffc3a0 40%, #ffafbd 80%);
+            --card-bg: rgba(255, 255, 255, 0.88);
+            --accent: #ff6b9c;
+            --accent-dark: #e45484;
+            --text-main: #3b1f2b;
+            --text-muted: #7c5667;
+            --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.12);
+            --radius-large: 26px;
+            --radius-medium: 18px;
+            --transition-fast: 0.25s ease-out;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            scroll-behavior: smooth;
+        }
+
+        .background-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 10% 20%, rgba(255,255,255,0.6) 0, transparent 45%),
+                radial-gradient(circle at 90% 10%, rgba(255,255,255,0.35) 0, transparent 45%),
+                radial-gradient(circle at 0% 80%, rgba(255,255,255,0.4) 0, transparent 50%);
+            opacity: 0.8;
+            z-index: -2;
+        }
+
+        .floating-hearts {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        .heart {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: var(--accent);
+            transform: rotate(45deg);
+            animation: floatUp 16s linear infinite;
+            opacity: 0.7;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: "";
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        .heart::before {
+            top: -8px;
+            left: 0;
+        }
+
+        .heart::after {
+            left: -8px;
+            top: 0;
+        }
+
+        /* Różne pozycje i czasy dla serduszek */
+        .heart:nth-child(1) { left: 5%; animation-duration: 18s; animation-delay: 0s; }
+        .heart:nth-child(2) { left: 15%; animation-duration: 22s; animation-delay: 3s; transform: scale(1.2) rotate(45deg); }
+        .heart:nth-child(3) { left: 25%; animation-duration: 19s; animation-delay: 6s; opacity: 0.5; }
+        .heart:nth-child(4) { left: 35%; animation-duration: 24s; animation-delay: 1s; transform: scale(0.9) rotate(45deg); }
+        .heart:nth-child(5) { left: 45%; animation-duration: 20s; animation-delay: 8s; }
+        .heart:nth-child(6) { left: 55%; animation-duration: 23s; animation-delay: 4s; opacity: 0.6; }
+        .heart:nth-child(7) { left: 65%; animation-duration: 21s; animation-delay: 10s; transform: scale(1.1) rotate(45deg); }
+        .heart:nth-child(8) { left: 75%; animation-duration: 25s; animation-delay: 2s; }
+        .heart:nth-child(9) { left: 85%; animation-duration: 19s; animation-delay: 7s; opacity: 0.5; }
+        .heart:nth-child(10){ left: 92%; animation-duration: 26s; animation-delay: 12s; transform: scale(0.85) rotate(45deg); }
+
+        @keyframes floatUp {
+            0%   { transform: translateY(100vh) rotate(45deg); opacity: 0; }
+            10%  { opacity: 0.7; }
+            100% { transform: translateY(-20vh) rotate(45deg); opacity: 0; }
+        }
+
+        .container {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(18px);
+            background: linear-gradient(to bottom, rgba(255,255,255,0.92), rgba(255,255,255,0.8));
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.7rem 0;
+        }
+
+        .logo {
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.7rem;
+            color: var(--accent-dark);
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .logo span {
+            font-size: 1.1rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        nav ul {
+            display: flex;
+            gap: 1.4rem;
+            list-style: none;
+        }
+
+        nav a {
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            position: relative;
+            padding-bottom: 0.2rem;
+            transition: color var(--transition-fast);
+        }
+
+        nav a::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+            transition: width var(--transition-fast);
+        }
+
+        nav a:hover {
+            color: var(--accent-dark);
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .hero {
+            padding: 3.5rem 0 3rem;
+        }
+
+        .hero-inner {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.9rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--accent-dark);
+            box-shadow: 0 8px 22px rgba(0,0,0,0.06);
+        }
+
+        .hero-badge span {
+            font-size: 1rem;
+        }
+
+        .hero-title {
+            margin-top: 1.2rem;
+            font-size: 2.7rem;
+            line-height: 1.15;
+            letter-spacing: 0.03em;
+            color: var(--text-main);
+        }
+
+        .hero-title .script {
+            font-family: 'Great Vibes', cursive;
+            font-size: 3.1rem;
+            color: var(--accent-dark);
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .hero-subtitle {
+            margin-top: 1rem;
+            font-size: 1rem;
+            color: var(--text-muted);
+            max-width: 32rem;
+        }
+
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem 1.6rem;
+            margin-top: 1.8rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .hero-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .hero-meta-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+
+        .hero-cta {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            margin-top: 2.3rem;
+        }
+
+        .btn-primary {
+            border: none;
+            cursor: pointer;
+            border-radius: 999px;
+            padding: 0.8rem 1.6rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: #fff;
+            box-shadow: 0 14px 35px rgba(255, 107, 156, 0.4);
+            transform: translateY(0);
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.03);
+            box-shadow: 0 18px 40px rgba(255, 107, 156, 0.55);
+        }
+
+        .hero-hint {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .hero-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-large);
+            padding: 1.6rem 1.4rem;
+            box-shadow: var(--shadow-soft);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-card::before {
+            content: "♥";
+            position: absolute;
+            font-family: 'Great Vibes', cursive;
+            font-size: 6rem;
+            color: rgba(255, 107, 156, 0.08);
+            right: -0.8rem;
+            bottom: -1.6rem;
+        }
+
+        .hero-photo-frame {
+            border-radius: 18px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.14);
+            transform: rotate(-2.5deg);
+            transform-origin: center;
+        }
+
+        .hero-photo-frame img {
+            display: block;
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+        }
+
+        .hero-note {
+            margin-top: 1rem;
+            font-size: 0.86rem;
+            color: var(--text-muted);
+        }
+
+        /* Sekcje ogólne */
+        section {
+            padding: 2.8rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 2.2rem;
+        }
+
+        .section-kicker {
+            font-size: 0.8rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--accent-dark);
+            margin-bottom: 0.4rem;
+        }
+
+        .section-title {
+            font-size: 1.7rem;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            max-width: 32rem;
+            margin: 0 auto;
+        }
+
+        /* O nas */
+        .about-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+            gap: 2.3rem;
+            align-items: center;
+        }
+
+        .about-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-large);
+            padding: 1.8rem 1.7rem;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .about-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .about-card p {
+            font-size: 0.96rem;
+            color: var(--text-muted);
+            margin-bottom: 0.7rem;
+        }
+
+        .about-highlights {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0,1fr));
+            gap: 0.8rem 1.3rem;
+            margin-top: 1.1rem;
+        }
+
+        .about-highlight {
+            font-size: 0.9rem;
+            color: var(--text-main);
+            display: flex;
+            gap: 0.4rem;
+            align-items: flex-start;
+        }
+
+        .about-highlight span {
+            color: var(--accent);
+            font-size: 1rem;
+        }
+
+        .about-photo {
+            border-radius: var(--radius-large);
+            border: 2px solid rgba(255,255,255,0.9);
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 18px 45px rgba(0,0,0,0.15);
+        }
+
+        .about-photo img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            max-height: 330px;
+        }
+
+        .about-photo-caption {
+            position: absolute;
+            left: 1rem;
+            bottom: 1rem;
+            padding: 0.35rem 0.9rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            background: rgba(0,0,0,0.35);
+            color: #fff;
+            backdrop-filter: blur(6px);
+        }
+
+        /* Oś czasu */
+        .timeline-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 0.4rem;
+            padding-right: 0.4rem;
+            margin-top: 2rem;
+        }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            transform: translateX(-50%);
+            background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0.4));
+        }
+
+        .timeline-item {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.8rem;
+            margin-bottom: 1.9rem;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content {
+            grid-column: 1 / 2;
+            text-align: right;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-meta {
+            grid-column: 2 / 3;
+            text-align: left;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            grid-column: 2 / 3;
+            text-align: left;
+        }
+
+        .timeline-item:nth-child(even) .timeline-meta {
+            grid-column: 1 / 2;
+            text-align: right;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            top: 0.65rem;
+            transform: translate(-50%, -50%);
+            width: 11px;
+            height: 11px;
+            border-radius: 999px;
+            background: #fff;
+            border: 3px solid var(--accent);
+            box-shadow: 0 0 0 6px rgba(255,107,156,0.2);
+        }
+
+        .timeline-content {
+            background: var(--card-bg);
+            border-radius: var(--radius-medium);
+            padding: 1rem 1.1rem;
+            box-shadow: 0 10px 28px rgba(0,0,0,0.09);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .timeline-content strong {
+            color: var(--text-main);
+        }
+
+        .timeline-meta {
+            font-size: 0.82rem;
+            color: var(--accent-dark);
+            padding-top: 0.3rem;
+        }
+
+        /* Galeria */
+        .gallery-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-large);
+            padding: 1.6rem 1.4rem 1.8rem;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 0.9rem;
+        }
+
+        .gallery-item {
+            border-radius: 18px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 210px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease-out;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .gallery-item::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 10% 10%, rgba(255,255,255,0.18), transparent 55%);
+            pointer-events: none;
+        }
+
+        /* Lista rzeczy, które w niej kochasz */
+        .reasons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-top: 1.6rem;
+        }
+
+        .reason-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-medium);
+            padding: 1.2rem 1.1rem;
+            box-shadow: 0 10px 26px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reason-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 30% 20%, #ffe6f7, var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            box-shadow: 0 8px 20px rgba(255,107,156,0.5);
+        }
+
+        .reason-text h3 {
+            font-size: 0.98rem;
+            margin-bottom: 0.25rem;
+            color: var(--text-main);
+        }
+
+        .reason-text p {
+            font-size: 0.86rem;
+            color: var(--text-muted);
+        }
+
+        .reason-card::after {
+            content: "";
+            position: absolute;
+            right: -12px;
+            bottom: -12px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255,107,156,0.18);
+        }
+
+        /* Wyznanie */
+        .confession-wrapper {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .confession-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-large);
+            padding: 2rem 1.8rem 2.2rem;
+            box-shadow: var(--shadow-soft);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .confession-card::before,
+        .confession-card::after {
+            content: "";
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 16px solid rgba(255,107,156,0.12);
+        }
+
+        .confession-card::before {
+            top: -80px;
+            left: -60px;
+        }
+
+        .confession-card::after {
+            bottom: -90px;
+            right: -70px;
+        }
+
+        .confession-title-script {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.3rem;
+            color: var(--accent-dark);
+            margin-bottom: 0.6rem;
+        }
+
+        .confession-intro {
+            font-size: 0.98rem;
+            color: var(--text-muted);
+            max-width: 440px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .confession-letter {
+            margin-top: 1.5rem;
+            text-align: left;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            line-height: 1.8;
+            background: rgba(255,255,255,0.95);
+            border-radius: 18px;
+            padding: 1.1rem 1.2rem;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.6s ease, opacity 0.4s ease;
+        }
+
+        .confession-letter.visible {
+            max-height: 600px;
+            opacity: 1;
+        }
+
+        .confession-footer {
+            margin-top: 1.2rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .confession-footer span {
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.4rem;
+            color: var(--accent-dark);
+        }
+
+        .btn-outline {
+            border-radius: 999px;
+            padding: 0.7rem 1.4rem;
+            border: 1px solid rgba(255,107,156,0.6);
+            background: rgba(255,255,255,0.95);
+            color: var(--accent-dark);
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+        }
+
+        .btn-outline:hover {
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: #fff;
+            box-shadow: 0 14px 36px rgba(255,107,156,0.5);
+            transform: translateY(-1px);
+        }
+
+        /* Muzyka */
+        .music-toggle {
+            position: fixed;
+            right: 1.4rem;
+            bottom: 1.4rem;
+            z-index: 20;
+        }
+
+        .music-toggle button {
+            border-radius: 999px;
+            border: none;
+            background: rgba(0,0,0,0.72);
+            color: #fff;
+            padding: 0.6rem 1.1rem;
+            font-size: 0.86rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+        }
+
+        .music-toggle button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.85);
+        }
+
+        .music-toggle-status {
+            font-size: 0.76rem;
+            opacity: 0.8;
+        }
+
+        footer {
+            padding: 2rem 0 1.8rem;
+            text-align: center;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        footer span {
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.1rem;
+            color: var(--accent-dark);
+        }
+
+        /* Responsywność */
+        @media (max-width: 900px) {
+            .hero-inner {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .hero-card {
+                max-width: 420px;
+                margin: 0 auto;
+            }
+
+            .about-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .about-photo {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+            }
+
+            .hero {
+                padding-top: 2.3rem;
+            }
+
+            .hero-title {
+                font-size: 2.1rem;
+            }
+
+            .hero-title .script {
+                font-size: 2.4rem;
+            }
+
+            .section-title {
+                font-size: 1.45rem;
+            }
+
+            .timeline::before {
+                left: 0.35rem;
+            }
+
+            .timeline-item {
+                grid-template-columns: minmax(0, 1fr);
+                padding-left: 1.3rem;
+            }
+
+            .timeline-item:nth-child(odd) .timeline-content,
+            .timeline-item:nth-child(odd) .timeline-meta,
+            .timeline-item:nth-child(even) .timeline-content,
+            .timeline-item:nth-child(even) .timeline-meta {
+                grid-column: 1 / -1;
+                text-align: left;
+            }
+
+            .timeline-dot {
+                left: 0.35rem;
+            }
+
+            .music-toggle {
+                right: 1rem;
+                bottom: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-meta {
+                flex-direction: column;
+            }
+
+            .about-card {
+                padding: 1.4rem 1.3rem;
+            }
+
+            .confession-card {
+                padding: 1.6rem 1.3rem 1.9rem;
+            }
+
+            .gallery-item img {
+                height: 190px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="background-overlay"></div>
+<div class="floating-hearts">
+    <!-- Serduszkowa animacja w tle -->
+    <div class="heart"></div>
+    <div class="heart"></div>
+    <div class="heart"></div>
+    <div class="heart"></div>
+    <div class="heart"></div>
+    <div class="heart"></div>
+    <div class="heart"></div>
+    <div class="heart"></div>
+    <div class="heart"></div>
+    <div class="heart"></div>
+</div>
+
+<!-- MUZYKA W TLE: podmień src na swoją piosenkę -->
+<audio id="bg-music" loop>
+    <!-- TODO: WSTAW ŚCIEŻKĘ DO MUZYKI, np. "muzyka.mp3" i umieść ten plik w tym samym folderze co index.html -->
+    <source src="muzyka.mp3" type="audio/mpeg">
+    Twoja przeglądarka nie obsługuje odtwarzacza audio.
+</audio>
+
+<div class="music-toggle">
+    <button id="music-toggle-btn">
+        ♪ Włącz muzykę
+        <span class="music-toggle-status">(kliknij, jeśli chcesz)</span>
+    </button>
+</div>
+
+<header>
+    <div class="container">
+        <div class="nav">
+            <div class="logo">
+                <!-- TODO: WSTAW WASZE IMIONA -->
+                <span>Nasza historia</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#about">O nas</a></li>
+                    <li><a href="#timeline">Nasza historia</a></li>
+                    <li><a href="#gallery">Galeria</a></li>
+                    <li><a href="#reasons">Za co Cię kocham</a></li>
+                    <li><a href="#confession">Wyznanie</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main>
+
+    <!-- HERO / POCZĄTEK STRONY -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-inner">
+                <div>
+                    <div class="hero-badge">
+                        <span>♥</span>
+                        <!-- TODO: MOŻESZ ZMIENIĆ TEKST POWITALNY -->
+                        Dla najważniejszej osoby na świecie
+                    </div>
+                    <h1 class="hero-title">
+                        <span class="script">
+                            <!-- TODO: TU WSTAW IMIĘ DZIEWCZYNY -->
+                            Kochana [IMIĘ]
+                        </span>
+                        <!-- TODO: MOŻESZ ZMIENIĆ TEN TYTUŁ -->
+                        Ta strona jest tylko dla Ciebie
+                    </h1>
+                    <p class="hero-subtitle">
+                        <!-- TODO: KRÓTKI WSTĘP OD SERCA (2–3 zdania) -->
+                        Chciałem stworzyć coś wyjątkowego – miejsce, w którym zapiszemy naszą historię,
+                        najpiękniejsze wspomnienia i słowa, których czasem nie da się powiedzieć na głos.
+                    </p>
+
+                    <div class="hero-meta">
+                        <div class="hero-meta-item">
+                            <div class="hero-meta-dot"></div>
+                            <!-- TODO: DATA, NP. DNIA KIEDY JEST PREZENT -->
+                            <span>Data: [tutaj wstaw datę]</span>
+                        </div>
+                        <div class="hero-meta-item">
+                            <div class="hero-meta-dot"></div>
+                            <!-- TODO: MIEJSCE POZNANIA LUB MIASTO -->
+                            <span>Miejsce: [tutaj wstaw miejsce dla Was ważne]</span>
+                        </div>
+                    </div>
+
+                    <div class="hero-cta">
+                        <button class="btn-primary" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">
+                            Zaczynamy naszą historię
+                        </button>
+                        <div class="hero-hint">
+                            Przewiń w dół i odkryj, co dla Ciebie przygotowałem.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-card">
+                    <div class="hero-photo-frame">
+                        <!-- TODO: PODMIEŃ NA WASZE ZDJĘCIE -->
+                        <img src="images/hero-zdjecie.jpg" alt="Nasze zdjęcie">
+                    </div>
+                    <p class="hero-note">
+                        <!-- TODO: KRÓTKI PODPIS POD ZDJĘCIEM -->
+                        Tutaj możesz wstawić jedno z Twoich ulubionych naszych zdjęć i dodać krótki podpis.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- O NAS -->
+    <section id="about">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-kicker">O nas</div>
+                <h2 class="section-title">Jak to wszystko się zaczęło</h2>
+                <p class="section-subtitle">
+                    <!-- TODO: 1–2 zdania ogólnie o Was (jak się poznaliście, co Was łączy) -->
+                    Każda piękna historia ma swój początek. Nasza zaczęła się wtedy, gdy...
+                </p>
+            </div>
+
+            <div class="about-grid">
+                <div class="about-card">
+                    <h3>
+			
+                        <!-- TODO: TYTUŁ, NP. "Dwoje ludzi, jedno serce" -->
